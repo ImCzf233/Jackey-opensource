@@ -1,0 +1,48 @@
+package com.viaversion.viaversion.libs.gson.internal.bind;
+
+import com.viaversion.viaversion.libs.gson.Gson;
+import com.viaversion.viaversion.libs.gson.JsonSyntaxException;
+import com.viaversion.viaversion.libs.gson.TypeAdapter;
+import com.viaversion.viaversion.libs.gson.TypeAdapterFactory;
+import com.viaversion.viaversion.libs.gson.reflect.TypeToken;
+import com.viaversion.viaversion.libs.gson.stream.JsonReader;
+import com.viaversion.viaversion.libs.gson.stream.JsonToken;
+import com.viaversion.viaversion.libs.gson.stream.JsonWriter;
+import java.io.IOException;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/* loaded from: Jackey Client b2.jar:com/viaversion/viaversion/libs/gson/internal/bind/TimeTypeAdapter.class */
+public final class TimeTypeAdapter extends TypeAdapter<Time> {
+    public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() { // from class: com.viaversion.viaversion.libs.gson.internal.bind.TimeTypeAdapter.1
+        @Override // com.viaversion.viaversion.libs.gson.TypeAdapterFactory
+        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
+            if (typeToken.getRawType() == Time.class) {
+                return new TimeTypeAdapter();
+            }
+            return null;
+        }
+    };
+    private final DateFormat format = new SimpleDateFormat("hh:mm:ss a");
+
+    @Override // com.viaversion.viaversion.libs.gson.TypeAdapter
+    public synchronized Time read(JsonReader in) throws IOException {
+        if (in.peek() == JsonToken.NULL) {
+            in.nextNull();
+            return null;
+        }
+        try {
+            Date date = this.format.parse(in.nextString());
+            return new Time(date.getTime());
+        } catch (ParseException e) {
+            throw new JsonSyntaxException(e);
+        }
+    }
+
+    public synchronized void write(JsonWriter out, Time value) throws IOException {
+        out.value(value == null ? null : this.format.format((Date) value));
+    }
+}
